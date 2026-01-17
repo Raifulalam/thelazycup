@@ -6,6 +6,10 @@ import compression from "compression";
 import rateLimit from "express-rate-limit";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.routes.js";
+import feedbackRoutes from "./routes/feedback.routes.js";
+
+import orderRoutes from "./routes/order.routes.js";
+import productRoutes from "./routes/product.routes.js";
 
 dotenv.config();
 
@@ -32,6 +36,10 @@ app.get("/", (req, res) => {
     res.send("Coffee Shop Backend Running ☕");
 });
 app.use("/api/auth", authRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api", feedbackRoutes);
+
 
 // Start server
 

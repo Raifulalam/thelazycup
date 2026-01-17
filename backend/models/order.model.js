@@ -34,8 +34,17 @@ const orderSchema = new mongoose.Schema(
             enum: ["PENDING", "PAID", "FAILED"],
             default: "PENDING",
             index: true
-        }
+        },
+        feedback: [
+            {
+                message: String,
+                rating: { type: Number, min: 1, max: 5 },
+                createdAt: { type: Date, default: Date.now }
+            }
+        ]
+
     },
+
     { timestamps: true }
 );
 
