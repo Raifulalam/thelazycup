@@ -27,7 +27,7 @@ export default function Navbar() {
     // 👑 Admin links
     const adminLinks: [string, string][] = [
         ['Dashboard', '/admin/dashboard'],
-        ['Manage Menu', '/admin/menu'],
+        ['Manage Menu', '/admin/products'],
         ['Orders', '/admin/orders'],
     ];
 

@@ -15,6 +15,7 @@ type Product = {
 export default function MenuPage() {
     const { user } = useAuth();
     const router = useRouter();
+    const [order, setOrder] = useState([]);
 
     const categories = [
         { label: "All", value: "all" },
@@ -53,6 +54,8 @@ export default function MenuPage() {
         };
         fetchMenu();
     }, [activeCategory]);
+
+
 
     const addToCart = (item: Product) => {
         setCartItems(prev => [...prev, item]);

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import api from "@/lib/api";
 import Link from "next/link";
+import { useAuth } from "@/app/context/Authcontext";
 
 type Product = {
     _id: string;
@@ -22,6 +23,8 @@ export default function AdminPage() {
     const [products, setProducts] = useState<Product[]>([]);
     const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
+    const { user } = useAuth();
+    const [message, setMessage] = useState("");
 
     useEffect(() => {
         const fetchAdminData = async () => {
@@ -32,7 +35,10 @@ export default function AdminPage() {
                 setProducts(productRes.data || []);
                 setOrders(orderRes.data.orders || []);
             } catch (err) {
-                console.error("Admin fetch failed", err);
+                setMessage(
+                    err.response?.data?.message || "Failed to fetch admin data"
+                );
+
             } finally {
                 setLoading(false);
             }
@@ -56,6 +62,13 @@ export default function AdminPage() {
 
     /* 📦 Top 8 products */
     const topProducts = products.slice(0, 8);
+    if (!user || user.role !== 'ADMIN') {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-[#1f1208] px-6 py-12">
+                <p className="text-red-500 text-lg">Access Denied. Admins Only.</p>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-[#1f1208] px-4 sm:px-6 py-6 text-white">
@@ -82,7 +95,7 @@ export default function AdminPage() {
                                 📦 Top Products
                             </h2>
                             <Link
-                                href="/admin/menu"
+                                href="/admin/products"
                                 className="text-xs sm:text-sm text-amber-400 hover:underline"
                             >
                                 View All →

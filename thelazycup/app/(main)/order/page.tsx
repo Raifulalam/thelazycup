@@ -9,7 +9,6 @@ export default function OrderPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const { user } = useAuth();
-
     const [feedbackVisible, setFeedbackVisible] = useState<Record<string, boolean>>({});
     const [feedbackMessages, setFeedbackMessages] = useState<Record<string, string>>({});
     const [submitting, setSubmitting] = useState<Record<string, boolean>>({});
@@ -100,7 +99,13 @@ export default function OrderPage() {
             setSubmitting(prev => ({ ...prev, [orderId]: false }));
         }
     };
-
+    if (!user || user.role !== 'CUSTOMER') {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-[#1f1208] px-6 py-12">
+                <p className="text-red-500 text-lg">Access Denied. Admins Only.</p>
+            </div>
+        );
+    }
     return (
         <div className="min-h-screen bg-[#1f1208] py-6 px-3 sm:px-6 md:px-12 text-white">
             <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-amber-400 text-center mb-8">
@@ -187,8 +192,8 @@ export default function OrderPage() {
                                                         disabled={submitting[order._id]}
                                                         onClick={() => handleRating(order._id, star)}
                                                         className={`text-xl sm:text-2xl ${(ratings[order._id] || 0) >= star
-                                                                ? "text-yellow-400"
-                                                                : "text-gray-500"
+                                                            ? "text-yellow-400"
+                                                            : "text-gray-500"
                                                             }`}
                                                     >
                                                         ★

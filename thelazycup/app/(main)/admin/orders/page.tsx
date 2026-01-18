@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import api from "@/lib/api";
+import { Trash2Icon } from "lucide-react";
+import { useAuth } from "@/app/context/Authcontext";
 
 type OrderItem = {
     productId: string;
@@ -32,6 +34,8 @@ export default function ManageOrdersPage() {
     const [filter, setFilter] = useState<"today" | "all">("today");
     const [loading, setLoading] = useState(true);
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+    const { user } = useAuth();
+    const [message, setMessage] = useState("");
 
     useEffect(() => {
         fetchOrders();
@@ -42,7 +46,10 @@ export default function ManageOrdersPage() {
             const res = await api.get("/orders");
             setOrders(res.data.orders || []);
         } catch (err) {
-            console.error("Failed to fetch orders", err);
+            setMessage(
+                err.response?.data?.message || "Failed to fetch orders"
+            );
+
         } finally {
             setLoading(false);
         }
@@ -75,6 +82,17 @@ export default function ManageOrdersPage() {
                 "Failed to update " +
                 field +
                 ": " +
+                (err.response?.data?.message || err.message)
+            );
+        }
+    };
+    const handleDeleteOrder = async (orderid: string) => {
+        try {
+            await api.delete(`/orders/${orderid}`);
+            fetchOrders(); // refresh
+        } catch (err: any) {
+            alert(
+                "Failed to delete order: " +
                 (err.response?.data?.message || err.message)
             );
         }
@@ -147,7 +165,13 @@ export default function ManageOrdersPage() {
             printWindow.print();
         }
     };
-
+    if (!user || user.role !== 'ADMIN') {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-[#1f1208] px-6 py-12">
+                <p className="text-red-500 text-lg">Access Denied. Admins Only.</p>
+            </div>
+        );
+    }
     return (
         <div className="min-h-screen bg-[#1f1208] px-4 sm:px-6 py-6 text-white">
             <h1 className="text-2xl sm:text-4xl font-bold text-amber-400 mb-6">
@@ -188,9 +212,14 @@ export default function ManageOrdersPage() {
                             key={order._id}
                             className="bg-gray-900 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
                         >
-                            <div>
+
+                            <div className="flex flex-col gap-1">
+                                <button onClick={() => handleDeleteOrder(order._id)} className="text-red-500 hover:text-red-700">
+                                    <Trash2Icon size={16} />
+                                </button>
                                 <p className="text-xs sm:text-sm text-gray-200">
                                     Order #{order._id.slice(-6)}
+
                                 </p>
                                 <p className="text-xs text-gray-400">
                                     {new Date(order.createdAt).toLocaleString()}

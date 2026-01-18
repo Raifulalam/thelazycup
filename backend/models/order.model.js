@@ -37,6 +37,10 @@ const orderSchema = new mongoose.Schema(
         },
         feedback: [
             {
+                userId: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "User"
+                },
                 message: String,
                 rating: { type: Number, min: 1, max: 5 },
                 createdAt: { type: Date, default: Date.now }

@@ -68,7 +68,7 @@ export const updateOrderStatus = async (req, res) => {
 
         // Validate inputs
         const validStatuses = ["PLACED", "PREPARING", "READY", "COMPLETED", "CANCELLED"];
-        const validPayments = ["PENDING", "COMPLETED", "FAILED"];
+        const validPayments = ["PENDING", "PAID", "FAILED"];
 
         if (status && !validStatuses.includes(status)) {
             return res.status(400).json({ message: "Invalid order status" });
@@ -91,4 +91,18 @@ export const updateOrderStatus = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 };
+
+export const deleteOrder = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const order = await Order.findByIdAndDelete(orderId);
+        if (!order) return res.status(404).json({ message: "Order not found" });
+        res.json({ message: "Order deleted successfully" });
+    } catch (err) {
+        console.error("Error deleting order:", err);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
+
 
