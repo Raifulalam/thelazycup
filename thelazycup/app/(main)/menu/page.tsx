@@ -5,7 +5,7 @@ import api from "@/lib/api";
 import { useRouter } from "next/navigation";
 
 import { toast } from "react-hot-toast";
-import { Toilet } from "lucide-react";
+
 type Product = {
     _id: string;
     name: string;
