@@ -32,7 +32,7 @@ export default function ProductsPage() {
     useEffect(() => {
         fetchProducts();
     }, [page, search]);
-    if (!user || user.role !== 'ADMIN') {
+    if (!user || user.role !== 'admin') {
         return (
             <div className="min-h-screen flex items-center justify-center bg-[#1f1208] px-6 py-12">
                 <p className="text-red-500 text-lg">Access Denied. Admins Only.</p>

@@ -102,7 +102,7 @@ export default function OrderPage() {
             setSubmitting(prev => ({ ...prev, [orderId]: false }));
         }
     };
-    if (!user || user.role !== 'CUSTOMER') {
+    if (!user) {
         toast.error("Please login again");
         return (
             <div className="min-h-screen flex items-center justify-center bg-[#1f1208] px-6 py-12">
