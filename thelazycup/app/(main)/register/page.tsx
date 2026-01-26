@@ -9,13 +9,13 @@ export default function RegisterForm() {
 
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
-
-    const handleChange = (e) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({
             ...form,
             [e.target.name]: e.target.value
         });
     };
+
 
     const handleRegister = async (e) => {
         e.preventDefault();
