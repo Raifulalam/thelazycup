@@ -5,7 +5,7 @@ import Link from 'next/link';
 export default function ForgotPasswordForm() {
     const [email, setEmail] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log('Forgot Password Email:', email);
         alert('Password reset functionality will be connected to backend!');
