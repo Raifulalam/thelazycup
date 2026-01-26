@@ -34,7 +34,7 @@ export default function LoginForm() {
 
             // ✅ Redirect
             router.push('/');
-        } catch (err) {
+        } catch (err: any) {
             setError(
                 err.response?.data?.message || 'Invalid email or password'
             );
