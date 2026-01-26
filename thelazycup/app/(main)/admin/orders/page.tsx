@@ -45,10 +45,11 @@ export default function ManageOrdersPage() {
         try {
             const res = await api.get("/orders");
             setOrders(res.data.orders || []);
-        } catch (err) {
-            setMessage(
-                err.response?.data?.message || "Failed to fetch orders"
-            );
+        } catch (err: any) {
+
+            const message =
+                err?.response?.data?.message || "Failed to fetch admin data";
+            setMessage(message);
 
         } finally {
             setLoading(false);

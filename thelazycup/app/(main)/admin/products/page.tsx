@@ -19,10 +19,10 @@ export default function ProductsPage() {
             setLoading(true);
             const res = await api.get(`/products/paginated?page=${page}&search=${search}`);
             setProducts(res.data.products);
-        } catch (err) {
-            setMessage(
-                err.response?.data?.message || "Failed to fetch products"
-            );
+        } catch (err: any) {
+            const message =
+                err?.response?.data?.message || "Failed to fetch admin data";
+            setMessage(message);
 
         } finally {
             setLoading(false);
