@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import api from "@/lib/api";
+import { toast } from 'react-hot-toast';
 
 export default function RegisterForm() {
     const [form, setForm] = useState({ name: '', email: '', password: '' });
@@ -25,13 +26,16 @@ export default function RegisterForm() {
             const res = await api.post("/auth/register", form);
 
             localStorage.setItem("token", res.data.token);
-            setMessage("✅ Registration successful!");
+
+            toast.success("Registration successful!")
             setForm({ name: "", email: "", password: "" });
             window.location.href = "/login";
         } catch (error) {
             setMessage(
-                error.response?.data?.message || "❌ Registration failed"
+                error.response?.data?.message
+
             );
+            toast.error(" Registration failed")
         } finally {
             setLoading(false);
         }
@@ -89,7 +93,7 @@ export default function RegisterForm() {
                 <div className="mt-4 text-center text-gray-400 text-sm">
                     Already have an account? <Link href="/login" className="hover:text-amber-400">Login</Link>
                 </div>
-                {message && <p>{message}</p>}
+
             </form>
         </div>
     );

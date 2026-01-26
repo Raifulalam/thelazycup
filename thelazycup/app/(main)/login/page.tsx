@@ -3,11 +3,12 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
-import { useAuth } from '../../context/Authcontext'; // ✅ ADD THIS
+import { useAuth } from '../../context/Authcontext';
+import { toast } from 'react-hot-toast';
 
 export default function LoginForm() {
     const router = useRouter();
-    const { login } = useAuth(); // ✅ GET LOGIN FUNCTION
+    const { login } = useAuth();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -24,11 +25,11 @@ export default function LoginForm() {
                 email,
                 password
             });
-
-            // 🔥 THIS IS THE MAGIC (UPDATES NAVBAR)
+            toast.success("Login Sucessfully")
+            //  THIS IS THE MAGIC (UPDATES NAVBAR)
             login(res.data.user, res.data.token);
             localStorage.setItem("token", res.data.token);
-            console.log('LOGIN RESPONSE:', res.data);
+
 
 
             // ✅ Redirect
@@ -37,6 +38,7 @@ export default function LoginForm() {
             setError(
                 err.response?.data?.message || 'Invalid email or password'
             );
+            toast.error("login failed please check your email & password");
         } finally {
             setLoading(false);
         }

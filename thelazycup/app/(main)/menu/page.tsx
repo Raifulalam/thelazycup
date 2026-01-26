@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import api from "@/lib/api";
 import { useRouter } from "next/navigation";
 
+import { toast } from "react-hot-toast";
+import { Toilet } from "lucide-react";
 type Product = {
     _id: string;
     name: string;
@@ -59,48 +61,73 @@ export default function MenuPage() {
 
     const addToCart = (item: Product) => {
         setCartItems(prev => [...prev, item]);
-        setCartOpen(true);
+        toast.success("Item added sucessfully")
+
     };
 
     const removeFromCart = (index: number) => {
         setCartItems(prev => prev.filter((_, i) => i !== index));
+        toast.success("Item removed sucessfully");
     };
 
     const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
 
     const handleCheckout = async () => {
-        if (!cartItems.length) return;
+        if (!user) {
+            toast.error("You are not logged in!");
+            return;
+        }
 
-        const groupedItems = cartItems.reduce((acc: any, item) => {
-            const existing = acc.find((i: any) => i.productId === item._id);
-            if (existing) existing.quantity += 1;
-            else {
+        if (!cartItems.length) {
+            toast.error("Your cart is empty");
+            return;
+        }
+
+        const groupedItems = cartItems.reduce((acc: any[], item) => {
+            const existing = acc.find(i => i.productId === item._id);
+
+            if (existing) {
+                existing.quantity += 1;
+            } else {
                 acc.push({
                     productId: item._id,
                     name: item.name,
                     price: item.price,
-                    quantity: 1
+                    quantity: 1,
                 });
             }
+
             return acc;
         }, []);
 
         const totalAmount = groupedItems.reduce(
-            (sum: number, i: any) => sum + i.price * i.quantity,
+            (sum, i) => sum + i.price * i.quantity,
             0
         );
 
-        await api.post("/orders", {
-            customerId: user?.id,
-            items: groupedItems,
-            totalAmount
-        });
+        try {
+            await api.post("/orders", {
+                customerId: user.id,
+                items: groupedItems,
+                totalAmount,
+            });
 
-        setCheckoutSuccess(true);
-        setCartItems([]);
-        setCartOpen(false);
-        setTimeout(() => setCheckoutSuccess(false), 3000);
+            toast.success("Order placed successfully 🎉");
+            setCheckoutSuccess(true);
+            setCartItems([]);
+            setCartOpen(false);
+
+            setTimeout(() => setCheckoutSuccess(false), 3000);
+
+        } catch (error: any) {
+            if (error.response?.status === 401) {
+                toast.error("Session expired. Please login again");
+            } else {
+                toast.error("Failed to place order. Try again");
+            }
+        }
     };
+
 
     return (
         <div className="min-h-screen bg-[#1f1208] py-8 px-4 sm:px-6">
@@ -136,7 +163,9 @@ export default function MenuPage() {
                             key={item._id}
                             className="bg-gray-900 p-4 sm:p-6 rounded-2xl shadow-md flex flex-col justify-between"
                         >
+
                             <div>
+
                                 <h2 className="text-base sm:text-xl font-semibold text-amber-400 flex justify-between mb-2">
                                     {item.name}
                                     <span className="text-gray-200 text-sm sm:text-lg">

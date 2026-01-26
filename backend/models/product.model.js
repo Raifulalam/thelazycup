@@ -8,13 +8,14 @@ const productSchema = new mongoose.Schema(
 
         category: {
             type: String,
-            enum: ["COFFEE", "TEA", "SNACK"],
+            enum: ["COFFEE", "TEA", "SNACK", "HOOKHA", "OTHERS"],
             index: true
         },
 
         isAvailable: { type: Boolean, default: true },
 
-        image: String
+        image: String,
+        description: { type: String, required: true },
     },
     { timestamps: true }
 );

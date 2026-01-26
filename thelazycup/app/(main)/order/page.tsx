@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import api from "@/lib/api";
 import { useAuth } from "@/app/context/Authcontext";
+import { toast } from 'react-hot-toast';
 
 export default function OrderPage() {
     const [orders, setOrders] = useState<any[]>([]);
@@ -21,6 +22,7 @@ export default function OrderPage() {
                 setLoading(true);
                 const res = await api.get(`/orders/user/${user?.id}`);
                 setOrders(res.data.orders || []);
+
             } catch (err) {
                 setError("Failed to load orders");
             } finally {
@@ -75,7 +77,7 @@ export default function OrderPage() {
             setSubmitting(prev => ({ ...prev, [orderId]: true }));
 
             await api.post(`/orders/${orderId}/feedback`, { message, rating });
-
+            toast.success("Feedback submitted successfully")
             setFeedbackMessages(prev => ({
                 ...prev,
                 [orderId]: "✅ Feedback submitted successfully"
@@ -95,16 +97,22 @@ export default function OrderPage() {
                 ...prev,
                 [orderId]: err.response?.data?.message || "Failed to submit feedback"
             }));
+            toast.error("Failed to submit feedback");
         } finally {
             setSubmitting(prev => ({ ...prev, [orderId]: false }));
         }
     };
     if (!user || user.role !== 'CUSTOMER') {
+        toast.error("Please login again");
         return (
             <div className="min-h-screen flex items-center justify-center bg-[#1f1208] px-6 py-12">
                 <p className="text-red-500 text-lg">Access Denied. Admins Only.</p>
             </div>
         );
+    }
+    const handlePayNow = () => {
+        toast.success("Coming soon you may proceed with manual payment method");
+        window.location.href = "/notfound";
     }
     return (
         <div className="min-h-screen bg-[#1f1208] py-6 px-3 sm:px-6 md:px-12 text-white">
@@ -117,6 +125,7 @@ export default function OrderPage() {
                     key={order._id}
                     className="bg-gray-900 p-4 sm:p-6 rounded-2xl shadow-lg my-6"
                 >
+
                     {/* Header */}
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 mb-3">
                         <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-amber-400">
@@ -143,8 +152,12 @@ export default function OrderPage() {
                             Total:
                             <span className="ml-1 text-amber-400">
                                 Rs.{order.totalAmount}
-                            </span>
+                            </span><br />
+                            {order.paymentStatus !== "PAID" && (
+                                <button className="text-sm sm:text-base bg-green-400 text-white px-3 py-1.5 sm:px-4 sm:py-1 rounded-full hover:bg-green-500" onClick={handlePayNow}>Pay now</button>
+                            )}
                         </p>
+
                         <p className="font-semibold text-gray-200">
                             Payment:
                             <span className="ml-1 text-orange-300">

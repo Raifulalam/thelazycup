@@ -6,7 +6,7 @@ import Navbar from '../components/Navebar';
 const geistSans = Geist({ subsets: ['latin'] });
 const geistMono = Geist_Mono({ subsets: ['latin'] });
 
-
+import { Toaster } from 'react-hot-toast';
 export const metadata: Metadata = {
   title: 'The Lazy Cup',
   description: 'Premium café experience – coffee, tea & hookah',
@@ -29,7 +29,7 @@ export default function RootLayout({
           <main className="min-h-screen">
             {children}
           </main>
-
+          <Toaster position="top-right" reverseOrder={false} />
         </Providers>
       </body>
     </html>
