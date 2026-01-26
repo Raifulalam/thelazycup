@@ -34,9 +34,9 @@ export default function Navbar() {
     // 🎯 Decide nav links
     let navLinks = publicLinks;
 
-    if (user?.role === 'ADMIN') {
+    if (user?.role === 'admin') {
         navLinks = [...userLinks, ...adminLinks];
-    } else if (user?.role === 'CUSTOMER') {
+    } else if (user?.role === 'user') {
         navLinks = userLinks;
     }
 
