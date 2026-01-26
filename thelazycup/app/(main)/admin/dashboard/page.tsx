@@ -35,10 +35,10 @@ export default function AdminPage() {
 
                 setProducts(productRes.data || []);
                 setOrders(orderRes.data.orders || []);
-            } catch (err) {
-                setMessage(
-                    err.response?.data?.message || "Failed to fetch admin data"
-                );
+            } catch (err: any) {
+                const message =
+                    err?.response?.data?.message || "Failed to fetch admin data";
+                setMessage(message);
 
             } finally {
                 setLoading(false);
