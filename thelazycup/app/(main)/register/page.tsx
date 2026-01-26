@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import api from "@/lib/api";
 import { toast } from 'react-hot-toast';
+import { AxiosError } from "axios";
 
 export default function RegisterForm() {
     const [form, setForm] = useState({ name: '', email: '', password: '' });
-
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({
             ...form,
@@ -16,30 +17,29 @@ export default function RegisterForm() {
         });
     };
 
-
-    const handleRegister = async (e) => {
+    const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
         setMessage("");
 
         try {
             const res = await api.post("/auth/register", form);
-
             localStorage.setItem("token", res.data.token);
-
-            toast.success("Registration successful!")
+            toast.success("Registration successful!");
             setForm({ name: "", email: "", password: "" });
             window.location.href = "/login";
-        } catch (error) {
-            setMessage(
-                error.response?.data?.message
-
-            );
-            toast.error(" Registration failed")
+        } catch (error: unknown) {
+            let errMsg = "Registration failed";
+            if (error instanceof AxiosError) {
+                errMsg = error.response?.data?.message || errMsg;
+            }
+            setMessage(errMsg);
+            toast.error(errMsg);
         } finally {
             setLoading(false);
         }
     };
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-[#1f1208] px-6">
             <form
@@ -83,12 +83,11 @@ export default function RegisterForm() {
 
                 <button
                     type="submit"
-                    className="w-full bg-amber-400 text-black py-3 rounded-2xl font-semibold hover:bg-amber-500 transition-all"
+                    disabled={loading}
+                    className="w-full bg-amber-400 text-black py-3 rounded-2xl font-semibold hover:bg-amber-500 transition-all disabled:opacity-50"
                 >
                     {loading ? "Registering..." : "Register"}
                 </button>
-
-
 
                 <div className="mt-4 text-center text-gray-400 text-sm">
                     Already have an account? <Link href="/login" className="hover:text-amber-400">Login</Link>
